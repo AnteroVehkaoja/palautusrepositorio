@@ -31,8 +31,16 @@ class UserService:
     def create_user(self, username, password, password_confirmation):
         self.validate(username, password, password_confirmation)
 
-        print(username)
-        print(password)
+     
+        user = self._user_repository.create(
+            User(username, password)
+        )
+
+        return user
+
+    def validate(self, username, password, password_confirmation):
+        if not username or not password:
+            raise UserInputError("Username and password are required")
         if len(username) < 3 and len(password) > 7 and any(char.isdigit() for char in password):
             raise UserInputError("Too short username")
 
@@ -45,15 +53,6 @@ class UserService:
         if password != password_confirmation:
             raise UserInputError("unmatching passwords")
         
-        user = self._user_repository.create(
-            User(username, password)
-        )
-
-        return user
-
-    def validate(self, username, password, password_confirmation):
-        if not username or not password:
-            raise UserInputError("Username and password are required")
 
         # toteuta loput tarkastukset tänne ja nosta virhe virhetilanteissa
 
